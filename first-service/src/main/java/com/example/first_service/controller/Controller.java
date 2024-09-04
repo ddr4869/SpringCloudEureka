@@ -1,6 +1,7 @@
 package com.example.first_service.controller;
 
 import com.example.first_service.kafka.KafkaProducerController;
+import com.example.first_service.service.FirstService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ public class Controller {
 
     private final Environment env;
     private final KafkaProducerController kafkaProducerController;
+    private final FirstService firstService;
+
 
     @GetMapping("/welcome")
     public String welcome() {
@@ -35,7 +38,13 @@ public class Controller {
                 8081);
     }
     @PostMapping("/kafka")
-    public void kafka(HttpServletRequest request) {
+    public void kafka() {
         kafkaProducerController.sendMassage("Hello Kafka");
+    }
+
+    @PostMapping("/circuit")
+    public Object circuit(HttpServletRequest request) {
+        log.info("circuit started");
+        return firstService.getFeignCall();
     }
 }
