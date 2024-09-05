@@ -19,8 +19,5 @@ public class UserTest {
 
     @Test
     public void test() {
-        System.out.println("가");
-        userRepository.findByUsername("tom").orElseThrow(() -> new DuplicateKeyException("username is already exist"));
-        System.out.println("나");
     }
 }

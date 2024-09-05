@@ -1,4 +1,4 @@
-package com.delivery.api_gateway.Filter;
+package com.delivery.api_gateway.filter;
 
 import lombok.Getter;
 import lombok.Setter;
