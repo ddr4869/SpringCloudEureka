@@ -8,10 +8,15 @@ spring:
     username: root
     password: 1234
 
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 1234
+
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       use-new-id-generator-mappings: false
@@ -49,10 +54,13 @@ management:
         include: health, busrefresh
 
 server:
-  port: 8082
+  port: 8081
 
-token:
-  secret: test
+jwt:
+  expired:
+    access: '1000000'
+    refresh: '10000000'
+  secret: SECRETKEYTEST1234567890TEST!@#$%^&
 
 topic:
   name: test

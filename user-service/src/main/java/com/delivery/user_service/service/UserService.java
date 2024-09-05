@@ -1,29 +1,58 @@
 package com.delivery.user_service.service;
 
-import com.delivery.user_service.dto.UserRequest;
-import com.delivery.user_service.dto.UserResponse;
+import com.delivery.user_service.dto.request.UserRequest;
+import com.delivery.user_service.dto.response.UserResponse;
+import com.delivery.user_service.entity.Authority;
 import com.delivery.user_service.entity.User;
+import com.delivery.user_service.entity.UserAddress;
+import com.delivery.user_service.repository.AuthorityRepository;
+import com.delivery.user_service.repository.UserAddressRepository;
 import com.delivery.user_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final UserAddressRepository userAddressRepository;
+    private final AuthorityRepository authorityRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserResponse getUser(final Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return UserResponse.of(user);
-    }
-    @Transactional
-    public void changeUser(final Long userId, final UserRequest userRequest){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        user.update(userRequest);
+    // sign up user
+    public UserResponse signUp(UserRequest userRequest) {
+        if (userRepository.findByUsername(userRequest.getName()).isPresent()) {
+            throw new DuplicateKeyException("Username '" + userRequest.getName() + "' is already taken.");
+        }
+        User user = User.builder()
+                .username(userRequest.getName())
+                .email(userRequest.getEmail())
+                .passwordHash(passwordEncoder.encode(userRequest.getPassword()))
+                .phoneNumber(userRequest.getPhoneNumber())
+                .build();
+
         userRepository.save(user);
+
+        Authority authority = new Authority(Authority.Authority_Type.ROLE_USER, user);
+        authorityRepository.save(authority);
+
+        UserAddress userAddress = UserAddress.builder()
+                .user(user)
+                .address(userRequest.getAddress())
+                .isDefault(true)
+                .build();
+        userAddressRepository.save(userAddress);
+
+        return UserResponse.builder()
+                .email(user.getEmail())
+                .name(user.getUsername())
+                .userId(user.getId())
+                .build();
     }
 }

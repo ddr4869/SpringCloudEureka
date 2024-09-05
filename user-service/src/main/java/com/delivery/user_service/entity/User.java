@@ -1,71 +1,67 @@
 package com.delivery.user_service.entity;
 
-import com.delivery.user_service.dto.UserRequest;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table
 @Getter
-@Table(name = "users")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Schema(description = "유저 ID")
     private Long id;
 
-    private String name;
+    @Column(unique = true)
+    @NotNull
+    @Schema(description = "유저 이름")
+    private String username;
 
-    private String babyName;
-
-    private String monthAfterBirth;
-
-    private String dueDate;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    private String profileImageUrl;
+    @Column()
+    @NotNull
+    @Schema(description = "유저 비밀번호")
+    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
-    private Role role;
+    @Schema(description = "암호화 알고리즘")
+    private EncryptionAlgorithm algorithm;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Schema(description = "권한")
+    @Setter
+    private List<Authority> authorities = new ArrayList<>();
+
+    @Schema(description = "유저 email")
+    private String email;
+
+    @Schema(description = "유저 전화번호")
+    private String phoneNumber;
 
     @Builder
-    public User(Long id, String name, String babyName, String monthAfterBirth, String email, String profileImageUrl, Role role) {
-        this.id = id;
-        this.name = name;
-        this.babyName = babyName;
-        this.monthAfterBirth = monthAfterBirth;
+    public User(String username, String passwordHash, String email, String phoneNumber) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.algorithm = EncryptionAlgorithm.BCRYPT;
         this.email = email;
-        this.profileImageUrl = profileImageUrl;
-        this.role = role;
+        this.phoneNumber = phoneNumber;
     }
 
-    public User update(String name, String picture) {
-        this.name = name;
-        this.profileImageUrl = picture;
 
-        return this;
+    public void addAuthorities(String auth) {
+        if (authorities==null) {
+            authorities = new ArrayList<>();
+        }
+        Authority authority = new Authority(auth, this);
+        authorities.add(authority);
     }
-
-    public void update(UserRequest userRequest) {
-        if(userRequest.getName() != null && !userRequest.getName().isBlank()){
-            this.name = userRequest.getName();
-        }
-        if(userRequest.getBabyName() != null && !userRequest.getBabyName().isBlank()){
-            this.babyName = userRequest.getBabyName();
-        }
-        if(userRequest.getMonthAfterbirth() != null && !userRequest.getMonthAfterbirth().isBlank()){
-            this.monthAfterBirth = userRequest.getMonthAfterbirth();
-        }
-        if(userRequest.getDueDate() != null && !userRequest.getDueDate().isBlank()) {
-            this.dueDate = userRequest.getDueDate();
-        }
+    public enum EncryptionAlgorithm {
+        BCRYPT, SCRYPT
     }
 }

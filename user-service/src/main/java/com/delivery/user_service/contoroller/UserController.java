@@ -1,12 +1,17 @@
 package com.delivery.user_service.contoroller;
 
+import com.delivery.user_service.dto.request.UserRequest;
+import com.delivery.user_service.dto.response.UserResponse;
+import com.delivery.user_service.entity.User;
+import com.delivery.user_service.global.success.CommonResponse;
 import com.delivery.user_service.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -21,4 +26,10 @@ public class UserController {
         return "pong";
     }
 
+    @PostMapping("/sign-up")
+    public ResponseEntity<CommonResponse<UserResponse>> signUp(@RequestBody @Valid UserRequest userRequest) {
+        UserResponse response = userService.signUp(userRequest);
+        //return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return CommonResponse.ResponseEntitySuccess(response);
+    }
 }
