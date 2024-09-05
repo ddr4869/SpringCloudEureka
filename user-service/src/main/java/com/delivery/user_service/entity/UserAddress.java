@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@Table(name = "user_address")
 public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

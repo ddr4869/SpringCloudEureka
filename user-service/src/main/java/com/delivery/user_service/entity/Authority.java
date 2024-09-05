@@ -7,6 +7,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "authority")
 public class Authority {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

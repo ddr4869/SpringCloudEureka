@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user-service")
-public class StoreController {
+@RequestMapping("/menu-service")
+public class MenuController {
     private final MenuService menuService;
 
     @GetMapping("/ping")

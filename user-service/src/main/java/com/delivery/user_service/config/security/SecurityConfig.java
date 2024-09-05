@@ -70,8 +70,9 @@ public class SecurityConfig {
                         }))
                 // 3. UsernamePasswordAuthenticationFilter 전 jwt 인증 filter(JwtAuthenticationFilter)
                 // 4. UsernamePasswordAuthenticationFilter는 로그인 정보를 가로채 AuthenticationManager에게 인증을 요청한다.
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                    .exceptionHandling(exceptionConfig -> exceptionConfig.accessDeniedHandler(customJwtEntryPoint))
+                // api-gateway에서 필터링
+//                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+//                    .exceptionHandling(exceptionConfig -> exceptionConfig.accessDeniedHandler(customJwtEntryPoint))
                 // set security filter if bearer token is valid, anyRequest is authenticated, else permitAll
 
                 .authorizeHttpRequests(authorize -> authorize

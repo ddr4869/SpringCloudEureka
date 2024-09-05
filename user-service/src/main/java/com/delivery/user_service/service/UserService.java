@@ -55,4 +55,14 @@ public class UserService {
                 .userId(user.getId())
                 .build();
     }
+
+    // find user by username
+    public UserResponse findByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return UserResponse.builder()
+                .email(user.getEmail())
+                .name(user.getUsername())
+                .userId(user.getId())
+                .build();
+    }
 }
