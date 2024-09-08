@@ -39,6 +39,9 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
+	compileOnly 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+	compileOnly 'jakarta.validation:jakarta.validation-api:3.0.0'
+
 }
 
 dependencyManagement {

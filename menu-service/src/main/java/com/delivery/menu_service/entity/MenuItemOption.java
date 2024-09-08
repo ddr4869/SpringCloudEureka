@@ -3,6 +3,7 @@ package com.delivery.menu_service.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,5 +24,9 @@ public class MenuItemOption {
     private String name;
     private BigDecimal additionalPrice;
 
-    // Getters and Setters
+    @Builder
+    public MenuItemOption(String name, BigDecimal additionalPrice) {
+        this.name = name;
+        this.additionalPrice = additionalPrice;
+    }
 }

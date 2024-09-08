@@ -1,12 +1,15 @@
 package com.delivery.store_service.contoroller;
 
+import com.delivery.store_service.dto.request.RegisterStoreRequest;
+import com.delivery.store_service.dto.response.StoreResponse;
+import com.delivery.store_service.global.success.CommonResponse;
 import com.delivery.store_service.service.StoreService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -20,4 +23,15 @@ public class StoreController {
         return "pong";
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<CommonResponse<StoreResponse>> createStore(@RequestBody @Valid RegisterStoreRequest registerStoreRequest) {
+        StoreResponse response = storeService.registerStore(registerStoreRequest);
+        return CommonResponse.ResponseEntitySuccess(response);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<CommonResponse<StoreResponse>> getStoreInfo(@RequestParam("storeName") String storeName) {
+        StoreResponse response = storeService.findStoreByName(storeName);
+        return CommonResponse.ResponseEntitySuccess(response);
+    }
 }

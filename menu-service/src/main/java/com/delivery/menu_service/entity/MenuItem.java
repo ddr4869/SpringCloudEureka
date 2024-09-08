@@ -36,12 +36,13 @@ public class MenuItem {
     }
 
     @Builder
-    public MenuItem(MenuCategory category, String name, String description, BigDecimal price, MenuItemStatus status) {
+    public MenuItem(MenuCategory category, String name, String description, BigDecimal price, MenuItemStatus status, MenuItemOption menuItemOption) {
         this.category = category;
         this.name = name;
         this.description = description;
         this.price = price;
         this.status = status;
+        this.menuItemOption = menuItemOption;
     }
 
     public enum MenuCategory {

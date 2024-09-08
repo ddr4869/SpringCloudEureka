@@ -2,6 +2,7 @@ package com.delivery.store_service.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -38,6 +39,20 @@ public class Store {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    // Getters and Setters
+    @Builder
+    public Store(String name, Long ownerId, StoreStatus status, String address, String phoneNumber) {
+        this.name = name;
+        this.ownerId = ownerId;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.status = StoreStatus.OPEN;
+    }
+    public void closeStore() {
+        this.status = StoreStatus.CLOSED;
+    }
+
+    public void openStore() {
+        this.status = StoreStatus.OPEN;
+    }
 }
 

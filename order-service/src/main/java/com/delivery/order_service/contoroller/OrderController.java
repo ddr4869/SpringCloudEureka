@@ -1,16 +1,16 @@
 package com.delivery.order_service.contoroller;
 
+import com.delivery.order_service.dto.FindUserByNameResponse;
 import com.delivery.order_service.dto.response.CreateOrderResponse;
 import com.delivery.order_service.global.success.CommonResponse;
 import com.delivery.order_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
@@ -29,4 +29,10 @@ public class OrderController {
         return CommonResponse.ResponseEntitySuccess(orderService.createOrder());
     }
 
+
+    @PostMapping("/webclient/create")
+    public Mono<CommonResponse<FindUserByNameResponse>> createOrderWebClient(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        return orderService.createOrderWebClient();
+    }
 }

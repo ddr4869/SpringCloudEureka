@@ -44,6 +44,7 @@ public class JwtUtil {
             Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.warn("token -> {}", token);
             log.info("Invalid JWT Token", e);
             return false;
         } catch (ExpiredJwtException e) {

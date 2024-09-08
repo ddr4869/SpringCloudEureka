@@ -9,11 +9,15 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -58,22 +62,35 @@ public class JwtAuthenticationGatewayFilter extends
                             .build();
                     return chain.filter(exchange.mutate().request(modifiedRequest).build());
                 } else {
+                    log.warn("token -> {}", token);
                     log.info("*** Invalid token ***");
-                    return Mono.error(new RuntimeException("Invalid JWT token"));
-                    //jwtErrResponse(response, CommonErrorCode.INVALID_TOKEN);
+                    //return Mono.error(new RuntimeException("Invalid JWT token"));
+                    return jwtErrResponse(exchange);
+                    //return Mono.empty();
                 }
             } catch (Exception e) {
                 // handler exception
                 log.info("*** Jwt Filter Error ***");
-                e.printStackTrace();
                 return Mono.error(new RuntimeException("Error"));
             }
         };
+
+
     }
 
     @Getter
     @Setter
     public static class Config {
         // 필터와 관련된 설정값을 추가할 수 있음
+    }
+
+    private Mono<Void> jwtErrResponse(ServerWebExchange exchange) {
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        exchange.getResponse().getHeaders().set(HttpHeaders.CONTENT_TYPE, "application/json");
+
+        String errorMessage = "{\"error\": \"Unauthorized\", \"message\": \"Invalid JWT token\"}";
+        byte[] bytes = errorMessage.getBytes();
+        return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(bytes)));
+
     }
 }
