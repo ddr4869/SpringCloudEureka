@@ -57,7 +57,8 @@ dependencies {
 	// zipkin & Sleuth
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
-
+	// prometheus
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 	// webflux
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 

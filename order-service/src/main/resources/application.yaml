@@ -53,7 +53,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, busrefresh
+        include: refresh,health,beans,httptrace,busrefresh,prometheus,metrics
 
 server:
   port: 8082

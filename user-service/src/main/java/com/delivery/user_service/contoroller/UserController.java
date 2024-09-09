@@ -5,6 +5,7 @@ import com.delivery.user_service.dto.response.UserResponse;
 import com.delivery.user_service.entity.User;
 import com.delivery.user_service.global.success.CommonResponse;
 import com.delivery.user_service.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.QueryParam;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class UserController {
 
     // ping
     @GetMapping("/ping")
+    @Timed(value = "users.status", longTask = true)
     public String ping() {
         return "pong";
     }
