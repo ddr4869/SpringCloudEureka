@@ -37,7 +37,9 @@ public class UserController {
 
     @GetMapping("/info")
     public ResponseEntity<CommonResponse<UserResponse>> findByUsername(@RequestParam String username) {
+        log.info("call findByUsername");
         UserResponse response = userService.findByUsername(username);
+        log.info("return findByUsername");
         return CommonResponse.ResponseEntitySuccess(response);
     }
 }

@@ -30,7 +30,7 @@ public class StoreController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<CommonResponse<StoreResponse>> getStoreInfo(@RequestParam("storeName") String storeName) {
+    public ResponseEntity<CommonResponse<StoreResponse>> getStoreInfo(@RequestParam("name") String storeName) {
         StoreResponse response = storeService.findStoreByName(storeName);
         return CommonResponse.ResponseEntitySuccess(response);
     }

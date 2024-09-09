@@ -56,7 +56,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0")
-
+	// zipkin & Sleuth
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 
 	// kafka
 	implementation 'org.springframework.kafka:spring-kafka'

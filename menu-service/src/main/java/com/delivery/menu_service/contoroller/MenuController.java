@@ -31,7 +31,7 @@ public class MenuController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<CommonResponse<MenuResponse>> getMenuInfo(@RequestParam("menuName") String menuName) {
+    public ResponseEntity<CommonResponse<MenuResponse>> getMenuInfo(@RequestParam("name") String menuName) {
         MenuResponse response = menuService.findMenuByName(menuName);
         return CommonResponse.ResponseEntitySuccess(response);
     }

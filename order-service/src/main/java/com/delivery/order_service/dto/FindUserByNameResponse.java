@@ -9,5 +9,4 @@ public class FindUserByNameResponse {
     private String email;
     private String name;
     private Long userId;
-
 }

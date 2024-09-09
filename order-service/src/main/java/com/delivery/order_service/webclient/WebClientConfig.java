@@ -18,19 +18,4 @@ public class WebClientConfig {
     public WebClient webClient(WebClient.Builder builder) {
         return builder.baseUrl("http://localhost:8080").build();
     }
-
-//    public static WebClient addAuthorizationHeader(WebClient.Builder builder, String token) {
-//        return builder
-//                .filter(authorizationHeaderFilter(token))  // 필터 추가
-//                .build();
-//    }
-//
-//    private ExchangeFilterFunction authorizationHeaderFilter(String token) {
-//        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-//            ClientRequest authorizedRequest = ClientRequest.from(clientRequest)
-//                    .header("Authorization", "Bearer " + token)  // Bearer 토큰 추가
-//                    .build();
-//            return Mono.just(authorizedRequest);
-//        });
-//    }
 }

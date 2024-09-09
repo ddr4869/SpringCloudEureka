@@ -1,5 +1,6 @@
 package com.delivery.order_service.global.success;
 
+import com.delivery.order_service.dto.FindUserByNameResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import java.util.List;
 @Schema(description = "공통 응답")
 public record CommonResponse<T>(
         @Schema(description = "status code")  int status,
-        @Schema(description = "응답 코드")  String code,
+        @Schema(description = "응답 코드") String code,
         @Schema(description = "응답 메시지")  String message,
         @Schema(description = "응답 데이터")  T data,
         @JsonInclude(JsonInclude.Include.NON_EMPTY) List<ValidationError> errors) {
@@ -71,7 +72,6 @@ public record CommonResponse<T>(
     public static <T> ResponseEntity<CommonResponse<T>> ResponseEntityUnauthorized(String message) {
         return ResponseEntity.status(401).body(CommonResponseUnauthorized(message));
     }
-
     @Getter
     @Builder
     @RequiredArgsConstructor
