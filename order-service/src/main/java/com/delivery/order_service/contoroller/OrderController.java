@@ -1,9 +1,7 @@
 package com.delivery.order_service.contoroller;
 
-import com.delivery.order_service.dto.FindUserByNameResponse;
-import com.delivery.order_service.dto.OrderResponse;
-import com.delivery.order_service.dto.PlaceOrderRequest;
-import com.delivery.order_service.dto.response.CreateOrderResponse;
+import com.delivery.order_service.dto.response.OrderResponse;
+import com.delivery.order_service.dto.request.PlaceOrderRequest;
 import com.delivery.order_service.entity.Orders;
 import com.delivery.order_service.global.success.CommonResponse;
 import com.delivery.order_service.service.OrderService;
@@ -11,10 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -28,11 +24,6 @@ public class OrderController {
     @GetMapping("/ping")
     public String ping() {
         return "pong";
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<CommonResponse<CreateOrderResponse>> createOrder() {
-        return CommonResponse.ResponseEntitySuccess(orderService.createOrder());
     }
 
     @PostMapping("/place-order")

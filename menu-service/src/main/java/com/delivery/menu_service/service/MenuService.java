@@ -1,10 +1,13 @@
 package com.delivery.menu_service.service;
 
+import com.delivery.menu_service.dto.FindStoreByNameResponse;
 import com.delivery.menu_service.dto.request.RegisterMenuRequest;
 import com.delivery.menu_service.dto.request.UpdateMenuRequest;
 import com.delivery.menu_service.dto.response.MenuResponse;
 import com.delivery.menu_service.entity.MenuItem;
 import com.delivery.menu_service.entity.MenuItemOption;
+import com.delivery.menu_service.feign.StoreServiceFeignClient;
+import com.delivery.menu_service.global.success.CommonResponse;
 import com.delivery.menu_service.repository.MenuItemOptionRepository;
 import com.delivery.menu_service.repository.MenuItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +25,17 @@ import java.util.stream.Collectors;
 public class MenuService {
     private final MenuItemRepository menuItemRepository;
     private final MenuItemOptionRepository menuItemOptionRepository;
+    private final StoreServiceFeignClient storeFeign;
     public MenuResponse RegisterMenu(RegisterMenuRequest registerMenuRequest) {
         if (menuItemRepository.findByName(registerMenuRequest.getName()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Menu item with name '" + registerMenuRequest.getName() + "' already exists.");
+        }
+
+        // Check if the store exists
+        CommonResponse<FindStoreByNameResponse> storeResponse = storeFeign.getStoreById(registerMenuRequest.getStoreId());
+        FindStoreByNameResponse store = storeResponse.data();
+        if (store == null || store.getStatus() != FindStoreByNameResponse.StoreStatus.OPEN) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Store is clos  ed or does not exist.");
         }
 
         MenuItemOption menuItemOption = MenuItemOption.builder()

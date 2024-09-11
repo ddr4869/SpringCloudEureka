@@ -12,6 +12,7 @@ import org.apache.kafka.common.protocol.types.Field;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -27,4 +28,10 @@ public class RegisterStoreRequest {
 
     @NotBlank(message = "빈칸일 수 없습니다.")
     private String phoneNumber;
+
+    @NotNull(message = "빈칸일 수 없습니다.")
+    private BigDecimal minimumOrderPrice;
+
+    @NotNull(message = "빈칸일 수 없습니다.")
+    private BigDecimal deliveryFee;
 }

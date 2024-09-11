@@ -1,11 +1,9 @@
 package com.delivery.order_service.entity;
 
-import com.delivery.order_service.dto.OrderResponse;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -42,13 +40,14 @@ public class Orders {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Orders(Long userId, Long storeId, Long menuId, OrderStatus orderStatus, BigDecimal totalPrice, String deliveryAddress) {
+    public Orders(Long userId, Long storeId, Long menuId, OrderStatus orderStatus, BigDecimal totalPrice, String deliveryAddress, List<OrderItems> orderItems) {
         this.userId = userId;
         this.storeId = storeId;
         this.menuId = menuId;
         this.orderStatus = orderStatus;
         this.totalPrice = totalPrice;
         this.deliveryAddress = deliveryAddress;
+        this.orderItems = orderItems;
     }
 
     public enum OrderStatus {

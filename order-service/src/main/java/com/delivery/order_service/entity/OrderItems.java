@@ -2,6 +2,7 @@ package com.delivery.order_service.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,12 @@ public class OrderItems {
 
     private int quantity;
     private BigDecimal price;
+
+    @Builder
+    public OrderItems(Orders order, Long menuItem, int quantity, BigDecimal price) {
+        this.order = order;
+        this.menuItem = menuItem;
+        this.quantity = quantity;
+        this.price = price;
+    }
 }

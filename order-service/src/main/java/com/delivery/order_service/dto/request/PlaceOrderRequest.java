@@ -1,10 +1,10 @@
-package com.delivery.order_service.dto;
+package com.delivery.order_service.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class PlaceOrderRequest {
@@ -15,10 +15,7 @@ public class PlaceOrderRequest {
     private Long storeId;
 
     @NotNull
-    private Long menuId;
-
-    @NotNull
-    private BigDecimal totalPrice;
+    private List<MenuOrderRequest> menuOrders;  // Multiple menus
 
     @NotBlank
     private String deliveryAddress;

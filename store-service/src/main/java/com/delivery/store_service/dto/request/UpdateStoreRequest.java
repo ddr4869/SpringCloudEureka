@@ -1,16 +1,16 @@
 package com.delivery.store_service.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class UpdateStoreRequest {
-    @NotBlank(message = "Store name is required.")
     private String name;
-
-    @NotBlank(message = "Address is required.")
     private String address;
-
-    @NotBlank(message = "Phone number is required.")
     private String phoneNumber;
+    private BigDecimal minimumOrderPrice;
+    private BigDecimal deliveryFee;
 }

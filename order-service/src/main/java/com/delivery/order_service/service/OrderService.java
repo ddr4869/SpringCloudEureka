@@ -1,7 +1,10 @@
 package com.delivery.order_service.service;
 
 import com.delivery.order_service.dto.*;
-import com.delivery.order_service.dto.response.CreateOrderResponse;
+import com.delivery.order_service.dto.request.MenuOrderRequest;
+import com.delivery.order_service.dto.request.PlaceOrderRequest;
+import com.delivery.order_service.dto.response.OrderResponse;
+import com.delivery.order_service.entity.OrderItems;
 import com.delivery.order_service.entity.Orders;
 import com.delivery.order_service.feign.MenuServiceFeignClient;
 import com.delivery.order_service.feign.StoreServiceFeignClient;
@@ -10,11 +13,14 @@ import com.delivery.order_service.global.success.CommonResponse;
 import com.delivery.order_service.repository.OrdersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,43 +35,54 @@ public class OrderService {
     private final OrdersRepository ordersRepository;
 
 
-    public CreateOrderResponse createOrder() {
-        log.info("Before call user microservice");
-
-        CommonResponse<FindUserByNameResponse> feignResponse = userServiceFeignClient.getUserById(1L);
-        log.info("after call user microservice");
-        return CreateOrderResponse.builder()
-                .orderId(1L)
-                .build();
-    }
-
     public OrderResponse placeOrder(PlaceOrderRequest request) {
-
         CommonResponse<FindUserByNameResponse> userResponse = userServiceFeignClient.getUserById(request.getUserId());
         FindUserByNameResponse user = userResponse.data();
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+            throw new IllegalArgumentException("User not found.");
         }
 
         CommonResponse<FindStoreByNameResponse> storeResponse = storeServiceFeignClient.getStoreById(request.getStoreId());
         FindStoreByNameResponse store = storeResponse.data();
         if (store == null || store.getStatus() != FindStoreByNameResponse.StoreStatus.OPEN) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Store is clos  ed or does not exist.");
+            throw new IllegalArgumentException("Store is closed or does not exist.");
         }
 
-        CommonResponse<FindMenuByNameResponse> menuResponse = menuServiceFeignClient.getMenuById(request.getMenuId());
-        FindMenuByNameResponse menu = menuResponse.data();
-        if (menu == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Menu item not found.");
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        List<OrderItems> orderItemsList = new ArrayList<>();
+
+        for (MenuOrderRequest menuOrder : request.getMenuOrders()) {
+            CommonResponse<FindMenuByNameResponse> menuResponse = menuServiceFeignClient.getMenuById(menuOrder.getMenuId());
+            FindMenuByNameResponse menu = menuResponse.data();
+            if (menu == null) {
+                throw new IllegalArgumentException("Menu item not found.");
+            }
+
+            BigDecimal itemPrice = menu.getPrice().multiply(BigDecimal.valueOf(menuOrder.getQuantity()));
+            totalPrice = totalPrice.add(itemPrice);
+
+            OrderItems orderItem = OrderItems.builder()
+                    .menuItem(menuOrder.getMenuId())
+                    .quantity(menuOrder.getQuantity())
+                    .price(itemPrice)
+                    .build();
+            orderItemsList.add(orderItem);
         }
+
+        BigDecimal minimumOrderPrice = store.getMinimumOrderPrice();
+        if (totalPrice.compareTo(minimumOrderPrice) < 0) {
+            throw new IllegalArgumentException("Total price is lower than the store's minimum order price.");
+        }
+
+        totalPrice = totalPrice.add(store.getDeliveryFee());
 
         Orders order = Orders.builder()
-                .userId(user.getUserId())
-                .storeId(store.getStoreId())
-                .menuId(request.getMenuId())
+                .userId(request.getUserId())
+                .storeId(request.getStoreId())
                 .orderStatus(Orders.OrderStatus.PLACED)
-                .totalPrice(request.getTotalPrice())
+                .totalPrice(totalPrice)
                 .deliveryAddress(request.getDeliveryAddress())
+                .orderItems(orderItemsList)
                 .build();
         ordersRepository.save(order);
 
@@ -76,7 +93,7 @@ public class OrderService {
                 .deliveryAddress(order.getDeliveryAddress())
                 .userId(order.getUserId())
                 .storeId(order.getStoreId())
-                .menuId(order.getMenuId())
+                .menuOrders(request.getMenuOrders())
                 .build();
     }
 
@@ -120,7 +137,6 @@ public class OrderService {
                 .deliveryAddress(order.getDeliveryAddress())
                 .userId(order.getUserId())
                 .storeId(order.getStoreId())
-                .menuId(order.getMenuId())
                 .build();
     }
 

@@ -1,13 +1,11 @@
 package com.delivery.store_service.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,6 +20,7 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeId;
 
+    @Setter
     private String name;
 
 //    @Column(nullable = false)
@@ -30,11 +29,18 @@ public class Store {
     @Enumerated(EnumType.STRING)
     private StoreCategory category;
 
+    @Setter
     private String address;
+    @Setter
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private StoreStatus status;
+
+    @Setter
+    private BigDecimal minimumOrderPrice;
+    @Setter
+    private BigDecimal deliveryFee;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -43,16 +49,18 @@ public class Store {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Store(String name, String address, String phoneNumber, StoreCategory category) {
+    public Store(String name, String address, String phoneNumber, StoreCategory category, BigDecimal minimumOrderPrice, BigDecimal deliveryFee) {
         this.name = name;
         //this.ownerId = ownerId;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.status = StoreStatus.OPEN;
         this.category = category;
+        this.minimumOrderPrice = minimumOrderPrice;
+        this.deliveryFee = deliveryFee;
     }
 
-    public void updateInfo(String name, String address, String phoneNumber) {
+    public void updateInfo(String name, String address, String phoneNumber, BigDecimal minimumOrderPrice, BigDecimal deliveryFee) {
         if (name != null && !name.isEmpty()) {
             this.name = name;
         }
@@ -61,6 +69,12 @@ public class Store {
         }
         if (phoneNumber != null && !phoneNumber.isEmpty()) {
             this.phoneNumber = phoneNumber;
+        }
+        if (minimumOrderPrice != null) {
+            this.minimumOrderPrice = minimumOrderPrice;
+        }
+        if (deliveryFee != null) {
+            this.deliveryFee = deliveryFee;
         }
     }
 
