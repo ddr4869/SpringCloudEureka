@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class StoreResponse {
+    private Long storeId;
     private String name;
     private Long ownerId;
     private String address;
@@ -14,7 +15,8 @@ public class StoreResponse {
     private StoreStatus status;
 
     @Builder
-    public StoreResponse(String name, Long ownerId, String address, String phoneNumber, StoreStatus status) {
+    public StoreResponse(Long storeId, String name, Long ownerId, String address, String phoneNumber, StoreStatus status) {
+        this.storeId = storeId;
         this.name = name;
         this.ownerId = ownerId;
         this.address = address;

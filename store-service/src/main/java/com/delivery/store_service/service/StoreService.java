@@ -33,6 +33,7 @@ public class StoreService {
 
         storeRepository.save(store);
         return StoreResponse.builder()
+                .storeId(store.getStoreId())
                 .name(store.getName())
                 .ownerId(store.getOwnerId())
                 .address(store.getAddress())
@@ -45,6 +46,20 @@ public class StoreService {
         Store store = storeRepository.findByName(name)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Store name '" + name + "' not found."));
         return StoreResponse.builder()
+                .storeId(store.getStoreId())
+                .name(store.getName())
+                .ownerId(store.getOwnerId())
+                .address(store.getAddress())
+                .phoneNumber(store.getPhoneNumber())
+                .status(store.getStatus())
+                .build();
+    }
+
+    public StoreResponse findStoreById(Long id) {
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Store id '" + id + "' not found."));
+        return StoreResponse.builder()
+                .storeId(store.getStoreId())
                 .name(store.getName())
                 .ownerId(store.getOwnerId())
                 .address(store.getAddress())

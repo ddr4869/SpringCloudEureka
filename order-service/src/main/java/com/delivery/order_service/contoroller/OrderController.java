@@ -2,9 +2,11 @@ package com.delivery.order_service.contoroller;
 
 import com.delivery.order_service.dto.FindUserByNameResponse;
 import com.delivery.order_service.dto.OrderResponse;
+import com.delivery.order_service.dto.PlaceOrderRequest;
 import com.delivery.order_service.dto.response.CreateOrderResponse;
 import com.delivery.order_service.global.success.CommonResponse;
 import com.delivery.order_service.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,13 @@ public class OrderController {
         return CommonResponse.ResponseEntitySuccess(orderService.createOrder());
     }
 
+    @PostMapping("/place-order")
+    public ResponseEntity<CommonResponse<OrderResponse>> placeOrder(
+            @RequestBody @Valid PlaceOrderRequest placeOrderRequest
+    ) {
+        OrderResponse response = orderService.placeOrder(placeOrderRequest);
+        return CommonResponse.ResponseEntitySuccess(response);
+    }
 
 //    @PostMapping("/webclient/create")
 //    public ResponseEntity<CommonResponse<Mono<OrderResponse>>>  createOrderWebClient(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {

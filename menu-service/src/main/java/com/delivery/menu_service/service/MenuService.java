@@ -65,4 +65,17 @@ public class MenuService {
                 .description(menuItem.getDescription())
                 .build();
     }
+
+    public MenuResponse findMenuById(Long id) {
+        MenuItem menuItem = menuItemRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Menu item with id '" + id + "' not found."));
+        return MenuResponse.builder()
+                .name(menuItem.getName())
+                .itemId(menuItem.getItemId())
+                .category(menuItem.getCategory())
+                .price(menuItem.getPrice())
+                .additionalPrice(menuItem.getMenuItemOption().getAdditionalPrice())
+                .description(menuItem.getDescription())
+                .build();
+    }
 }

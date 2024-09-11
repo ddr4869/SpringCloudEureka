@@ -31,9 +31,17 @@ public class MenuController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<CommonResponse<MenuResponse>> getMenuInfo(@RequestParam("name") String menuName) {
-        MenuResponse response = menuService.findMenuByName(menuName);
-        return CommonResponse.ResponseEntitySuccess(response);
+    public ResponseEntity<CommonResponse<MenuResponse>> getMenuInfo(@RequestParam(required = false) Long id,
+                                                                    @RequestParam(required = false) String name) {
+        if (id != null) {
+            MenuResponse response = menuService.findMenuById(id);
+            return CommonResponse.ResponseEntitySuccess(response);
+        } else if (name != null) {
+            MenuResponse response = menuService.findMenuByName(name);
+            return CommonResponse.ResponseEntitySuccess(response);
+        } else {
+            return CommonResponse.ResponseEntityBadRequest("id 또는 username 중 하나는 필수입니다.");
+        }
     }
 
 }

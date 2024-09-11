@@ -30,8 +30,18 @@ public class StoreController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<CommonResponse<StoreResponse>> getStoreInfo(@RequestParam("name") String storeName) {
-        StoreResponse response = storeService.findStoreByName(storeName);
-        return CommonResponse.ResponseEntitySuccess(response);
+    public ResponseEntity<CommonResponse<StoreResponse>> getStoreInfo(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String name
+    ) {
+        if (id != null) {
+            StoreResponse response = storeService.findStoreById(id);
+            return CommonResponse.ResponseEntitySuccess(response);
+        } else if (name != null) {
+            StoreResponse response = storeService.findStoreByName(name);
+            return CommonResponse.ResponseEntitySuccess(response);
+        } else {
+            return CommonResponse.ResponseEntityBadRequest("id 또는 name 중 하나는 필수입니다.");
+        }
     }
 }

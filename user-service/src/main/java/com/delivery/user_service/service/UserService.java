@@ -65,4 +65,13 @@ public class UserService {
                 .userId(user.getId())
                 .build();
     }
+
+    public UserResponse findById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return UserResponse.builder()
+                .email(user.getEmail())
+                .name(user.getUsername())
+                .userId(user.getId())
+                .build();
+    }
 }

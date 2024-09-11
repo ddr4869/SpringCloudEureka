@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FindStoreByNameResponse {
-    private Long id;
+    private Long storeId;
     private String name;
     private Long ownerId;
     private String address;

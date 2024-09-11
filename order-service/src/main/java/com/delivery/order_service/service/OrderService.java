@@ -1,12 +1,11 @@
 package com.delivery.order_service.service;
 
-import com.delivery.order_service.dto.FindMenuByNameResponse;
-import com.delivery.order_service.dto.FindStoreByNameResponse;
-import com.delivery.order_service.dto.FindUserByNameResponse;
+import com.delivery.order_service.dto.*;
 import com.delivery.order_service.dto.response.CreateOrderResponse;
-import com.delivery.order_service.dto.OrderResponse;
 import com.delivery.order_service.entity.OrderItems;
 import com.delivery.order_service.entity.Orders;
+import com.delivery.order_service.feign.MenuServiceFeignClient;
+import com.delivery.order_service.feign.StoreServiceFeignClient;
 import com.delivery.order_service.feign.UserServiceFeignClient;
 import com.delivery.order_service.global.success.CommonResponse;
 import com.delivery.order_service.repository.OrdersRepository;
@@ -17,34 +16,81 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.query.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional()
 public class OrderService {
-    //private final OrdersRepository orderRepository;
     private final UserServiceFeignClient userServiceFeignClient;
-    private final WebClient webClient;
-    private final UserServiceClient userServiceClient;
-    private final StoreServiceClient storeServiceClient;
-    private final MenuServiceClient menuServiceClient;
+    private final StoreServiceFeignClient storeServiceFeignClient;
+    private final MenuServiceFeignClient menuServiceFeignClient;
     private final OrdersRepository ordersRepository;
 
 
     public CreateOrderResponse createOrder() {
         log.info("Before call user microservice");
 
-        CommonResponse<FindUserByNameResponse> feignResponse = userServiceFeignClient.getUserByUsername("tom");
+        CommonResponse<FindUserByNameResponse> feignResponse = userServiceFeignClient.getUserById(1L);
         log.info("after call user microservice");
         return CreateOrderResponse.builder()
                 .orderId(1L)
+                .build();
+    }
+
+    public OrderResponse placeOrder(PlaceOrderRequest request) {
+
+        // Step 1: Check if the user exists
+        CommonResponse<FindUserByNameResponse> userResponse = userServiceFeignClient.getUserById(request.getUserId());
+        FindUserByNameResponse user = userResponse.data();
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+        }
+        log.info("user -> {}", user);
+
+        // Step 2: Check if the store exists and is open
+        CommonResponse<FindStoreByNameResponse> storeResponse = storeServiceFeignClient.getStoreById(request.getStoreId());
+        FindStoreByNameResponse store = storeResponse.data();
+        if (store == null || store.getStatus() != FindStoreByNameResponse.StoreStatus.OPEN) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Store is clos  ed or does not exist.");
+        }
+        log.info("store -> {}", store);
+
+        // Step 3: Check if the menu item exists
+        CommonResponse<FindMenuByNameResponse> menuResponse = menuServiceFeignClient.getMenuById(request.getMenuId());
+        FindMenuByNameResponse menu = menuResponse.data();
+        if (menu == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Menu item not found.");
+        }
+        log.info("menu -> {}", menu);
+
+        // Step 4: If all checks pass, save the order
+        Orders order = Orders.builder()
+                .userId(user.getUserId())
+                .storeId(store.getStoreId())
+                .menuId(request.getMenuId())
+                .orderStatus(Orders.OrderStatus.PLACED)
+                .totalPrice(request.getTotalPrice())
+                .deliveryAddress(request.getDeliveryAddress())
+                .build();
+        ordersRepository.save(order);
+
+        return OrderResponse.builder()
+                .orderId(order.getOrderId())
+                .orderStatus(order.getOrderStatus())
+                .totalPrice(order.getTotalPrice())
+                .deliveryAddress(order.getDeliveryAddress())
+                .userId(order.getUserId())
+                .storeId(order.getStoreId())
+                .menuId(order.getMenuId())
                 .build();
     }
 

@@ -38,10 +38,18 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<CommonResponse<UserResponse>> findByUsername(@RequestParam String username) {
-        log.info("call findByUsername");
-        UserResponse response = userService.findByUsername(username);
-        log.info("return findByUsername");
-        return CommonResponse.ResponseEntitySuccess(response);
+    public ResponseEntity<CommonResponse<UserResponse>> findUserInfo(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String name
+    ) {
+        if (id != null) {
+            UserResponse response = userService.findById(id);
+            return CommonResponse.ResponseEntitySuccess(response);
+        } else if (name != null) {
+            UserResponse response = userService.findByUsername(name);
+            return CommonResponse.ResponseEntitySuccess(response);
+        } else {
+            return CommonResponse.ResponseEntityBadRequest("id 또는 name 중 하나는 필수입니다.");
+        }
     }
 }
