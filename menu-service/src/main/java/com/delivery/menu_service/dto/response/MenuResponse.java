@@ -14,16 +14,20 @@ public class MenuResponse {
     private MenuItem.MenuCategory category;
     private String name;
     private String description;
+    private Long storeId;
+    private MenuItem.MenuItemStatus status;
     private BigDecimal price;
     private BigDecimal additionalPrice;
 
     @Builder
-    public MenuResponse(Long itemId, MenuItem.MenuCategory category, String name, String description, BigDecimal price, BigDecimal additionalPrice) {
+    public MenuResponse(Long itemId, MenuItem.MenuCategory category, String name, String description, BigDecimal price, BigDecimal additionalPrice, MenuItem.MenuItemStatus status, Long storeId) {
         this.itemId = itemId;
         this.category = category;
         this.name = name;
         this.description = description;
+        this.storeId = storeId;
         this.price = price;
         this.additionalPrice = additionalPrice;
+        this.status = status;
     }
 }

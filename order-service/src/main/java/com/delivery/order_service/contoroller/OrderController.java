@@ -4,6 +4,7 @@ import com.delivery.order_service.dto.FindUserByNameResponse;
 import com.delivery.order_service.dto.OrderResponse;
 import com.delivery.order_service.dto.PlaceOrderRequest;
 import com.delivery.order_service.dto.response.CreateOrderResponse;
+import com.delivery.order_service.entity.Orders;
 import com.delivery.order_service.global.success.CommonResponse;
 import com.delivery.order_service.service.OrderService;
 import jakarta.validation.Valid;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,6 +41,33 @@ public class OrderController {
     ) {
         OrderResponse response = orderService.placeOrder(placeOrderRequest);
         return CommonResponse.ResponseEntitySuccess(response);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CommonResponse<List<OrderResponse>>> getOrdersByUser(@PathVariable Long userId) {
+        List<OrderResponse> orders = orderService.getOrdersByUser(userId);
+        return CommonResponse.ResponseEntitySuccess(orders);
+    }
+
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<CommonResponse<List<OrderResponse>>> getOrdersByStore(@PathVariable Long storeId) {
+        List<OrderResponse> orders = orderService.getOrdersByStore(storeId);
+        return CommonResponse.ResponseEntitySuccess(orders);
+    }
+
+    @PutMapping("/status/{orderId}")
+    public ResponseEntity<CommonResponse<OrderResponse>> updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestParam Orders.OrderStatus status
+    ) {
+        OrderResponse order = orderService.updateOrderStatus(orderId, status);
+        return CommonResponse.ResponseEntitySuccess(order);
+    }
+
+    @PutMapping("/cancel/{orderId}")
+    public ResponseEntity<CommonResponse<OrderResponse>> cancelOrder(@PathVariable Long orderId) {
+        OrderResponse order = orderService.cancelOrder(orderId);
+        return CommonResponse.ResponseEntitySuccess(order);
     }
 
 //    @PostMapping("/webclient/create")

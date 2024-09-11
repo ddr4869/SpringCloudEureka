@@ -41,15 +41,11 @@ public class JwtAuthenticationGatewayFilter extends
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             try {
-                System.out.println("start!!");
                 // 토큰 검증 제외 경로 설정
                 String path = exchange.getRequest().getURI().getPath();
                 PathMatcher pathMatcher = new AntPathMatcher();
-                System.out.println("path: " + path);
                 for (String excludePath : excludePathList) {
-                    System.out.println("excludePath: " + excludePath);
                     if (pathMatcher.match(excludePath, path)) {
-                        System.out.println("exit !! ");
                         return chain.filter(exchange);
                     }
                 }

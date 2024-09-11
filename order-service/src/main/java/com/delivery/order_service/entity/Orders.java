@@ -2,10 +2,7 @@ package com.delivery.order_service.entity;
 
 import com.delivery.order_service.dto.OrderResponse;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import reactor.core.publisher.Mono;
@@ -31,6 +28,7 @@ public class Orders {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItems> orderItems;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
@@ -52,7 +50,6 @@ public class Orders {
         this.totalPrice = totalPrice;
         this.deliveryAddress = deliveryAddress;
     }
-
 
     public enum OrderStatus {
         PLACED, PREPARING, DELIVERING, COMPLETED, CANCELLED

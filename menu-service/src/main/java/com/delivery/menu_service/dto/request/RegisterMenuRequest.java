@@ -16,6 +16,8 @@ public class RegisterMenuRequest {
     @NotNull(message = "메뉴 이름을 입력해주세요.")
     private String name;
     private String description;
+    @NotNull(message = "가계 ID를 입력해주세요.")
+    private Long storeId;
     @NotNull(message = "메뉴 가격을 입력해주세요.")
     private BigDecimal price;
     @NotNull(message = "추가 가격을 입력해주세요.")
