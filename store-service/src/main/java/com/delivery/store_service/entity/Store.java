@@ -24,8 +24,11 @@ public class Store {
 
     private String name;
 
-    @Column(nullable = false)
-    private Long ownerId;
+//    @Column(nullable = false)
+//    private Long ownerId;
+
+    @Enumerated(EnumType.STRING)
+    private StoreCategory category;
 
     private String address;
     private String phoneNumber;
@@ -40,13 +43,27 @@ public class Store {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Store(String name, Long ownerId, StoreStatus status, String address, String phoneNumber) {
+    public Store(String name, String address, String phoneNumber, StoreCategory category) {
         this.name = name;
-        this.ownerId = ownerId;
+        //this.ownerId = ownerId;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.status = StoreStatus.OPEN;
+        this.category = category;
     }
+
+    public void updateInfo(String name, String address, String phoneNumber) {
+        if (name != null && !name.isEmpty()) {
+            this.name = name;
+        }
+        if (address != null && !address.isEmpty()) {
+            this.address = address;
+        }
+        if (phoneNumber != null && !phoneNumber.isEmpty()) {
+            this.phoneNumber = phoneNumber;
+        }
+    }
+
     public void closeStore() {
         this.status = StoreStatus.CLOSED;
     }
