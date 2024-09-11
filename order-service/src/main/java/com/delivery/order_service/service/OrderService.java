@@ -2,28 +2,18 @@ package com.delivery.order_service.service;
 
 import com.delivery.order_service.dto.*;
 import com.delivery.order_service.dto.response.CreateOrderResponse;
-import com.delivery.order_service.entity.OrderItems;
 import com.delivery.order_service.entity.Orders;
 import com.delivery.order_service.feign.MenuServiceFeignClient;
 import com.delivery.order_service.feign.StoreServiceFeignClient;
 import com.delivery.order_service.feign.UserServiceFeignClient;
 import com.delivery.order_service.global.success.CommonResponse;
 import com.delivery.order_service.repository.OrdersRepository;
-import com.delivery.order_service.webclient.MenuServiceClient;
-import com.delivery.order_service.webclient.StoreServiceClient;
-import com.delivery.order_service.webclient.UserServiceClient;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor

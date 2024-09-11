@@ -57,6 +57,14 @@ public record CommonResponse<T>(
                 .build();
     }
 
+    public static <T> CommonResponse<T> CommonResponseFeignError(String message) {
+        return CommonResponse.<T>builder()
+                .status(500)
+                .code("Feigh Error")
+                .message(message)
+                .build();
+    }
+
     public static <T> ResponseEntity<CommonResponse<T>> ResponseEntitySuccess(T data) {
         return ResponseEntity.status(200).body(CommonResponseSuccess(data));
     }
